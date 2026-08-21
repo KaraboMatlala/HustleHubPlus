@@ -12,16 +12,52 @@
 
 <body>
 
-    <div class="container">
+    <div class="page">
 
-        <div class="login-box">
+        <div class="orb orb-one"></div>
+        <div class="orb orb-two"></div>
 
-            <h1>HustleHub+</h1>
+        <div class="plus-pattern plus-one">+</div>
+        <div class="plus-pattern plus-two">+</div>
+        <div class="plus-pattern plus-three">+</div>
 
-            <p class="subtitle">
-                Welcome back! Please login to your account.
-            </p>
 
+        <div class="login-card">
+            <div class="top-section">
+
+                <div class="logo">
+                    HustleHub<span>+</span>
+                </div>
+
+                <div class="status">
+                    <span class="status-dot"></span>
+                    Welcome back
+                </div>
+
+            </div>
+
+
+            <!-- Heading -->
+            <div class="heading">
+
+                <p class="eyebrow">
+                    WELCOME BACK
+                </p>
+
+                <h1>
+                    Good to see<br>
+                    you <span>again.</span>
+                </h1>
+
+                <p class="intro">
+                    Log in to your HustleHub+ account and
+                    pick up where you left off.
+                </p>
+
+            </div>
+
+
+            <!-- Login form -->
             <form id="loginForm">
 
                 <div class="form-group">
@@ -33,45 +69,136 @@
                     <input
                         type="email"
                         id="email"
-                        placeholder="Enter your email"
+                        placeholder="you@example.com"
                         required
                     >
 
                 </div>
+
 
                 <div class="form-group">
 
-                    <label for="password">
-                        Password
-                    </label>
+                    <div class="label-row">
 
-                    <input
-                        type="password"
-                        id="password"
-                        placeholder="Enter your password"
-                        required
-                    >
+                        <label for="password">
+                            Password
+                        </label>
+
+                        <a href="#">
+                            Forgot password?
+                        </a>
+
+                    </div>
+
+
+                    <div class="password-box">
+
+                        <input
+                            type="password"
+                            id="password"
+                            placeholder="Enter your password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            onclick="togglePassword('password', this)"
+                        >
+                            Show
+                        </button>
+
+                    </div>
 
                 </div>
 
-                <button type="submit" class="btn">
-                    Login
+
+                <!-- Remember me btn-->
+                <div class="remember">
+
+                    <label>
+
+                        <input type="checkbox">
+
+                        <span class="custom-checkbox"></span>
+
+                        Remember me
+
+                    </label>
+
+                </div>
+
+
+                <!-- Btn -->
+                <button
+                    type="submit"
+                    class="login-btn"
+                >
+
+                    <span>Login to HustleHub+</span>
+
+
                 </button>
 
             </form>
 
+
+            <!-- Message -->
             <p id="loginMessage"></p>
 
-            <p class="register-link">
-                Don't have an account?
-                <a href="register.html">Register here</a>
-            </p>
+
+            <!-- Register -->
+            <div class="bottom">
+
+                <span>Don't have an account?</span>
+
+                <a href="register.html">
+                    Create one
+                </a>
+
+            </div>
+
+
+            <!-- Footer -->
+            <div class="card-footer">
+
+                <span>HustleHub+</span>
+
+                <span>Build. Connect. Grow.</span>
+
+            </div>
 
         </div>
 
     </div>
 
+
     <script src="script.js"></script>
+
+
+    <script>
+
+        function togglePassword(inputId, button) {
+
+            const input =
+                document.getElementById(inputId);
+
+            if (input.type === "password") {
+
+                input.type = "text";
+
+                button.textContent = "Hide";
+
+            } else {
+
+                input.type = "password";
+
+                button.textContent = "Show";
+
+            }
+
+        }
+
+    </script>
 
 </body>
 

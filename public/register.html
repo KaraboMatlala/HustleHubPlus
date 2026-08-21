@@ -5,39 +5,81 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>HustleHub+ | Register</title>
+    <title>HustleHub+ | Create Account</title>
 
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <div class="container">
+    <div class="page">
+        <div class="orb orb-one"></div>
+        <div class="orb orb-two"></div>
 
-        <div class="login-box">
+        <div class="plus-pattern plus-one">+</div>
+        <div class="plus-pattern plus-two">+</div>
+        <div class="plus-pattern plus-three">+</div>
 
-            <h1>HustleHub+</h1>
 
-            <p class="subtitle">
-                Create your HustleHub+ account
-            </p>
+        <div class="register-card">
 
+            <!-- Top -->
+            <div class="top-section">
+
+                <div class="logo">
+                    HustleHub<span>+</span>
+                </div>
+
+                <div class="status">
+                    <span class="status-dot"></span>
+                    Join the hub
+                </div>
+
+            </div>
+
+
+            <!-- Heading -->
+            <div class="heading">
+
+                <p class="eyebrow">
+                    CREATE YOUR ACCOUNT
+                </p>
+
+                <h1>
+                    Your hustle<br>
+                    starts <span>here.</span>
+                </h1>
+
+                <p class="intro">
+                    Create your account and start connecting,
+                    building and growing with HustleHub+.
+                </p>
+
+            </div>
+
+
+            <!-- Form -->
             <form id="registerForm">
 
-                <div class="form-group">
+                <div class="form-row">
 
-                    <label for="name">
-                        Full Name
-                    </label>
+                    <div class="form-group">
 
-                    <input
-                        type="text"
-                        id="name"
-                        placeholder="Enter your full name"
-                        required
-                    >
+                        <label for="name">
+                            Full Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="name"
+                            placeholder="Your full name"
+                            required
+                        >
+
+                    </div>
 
                 </div>
+
 
                 <div class="form-group">
 
@@ -48,60 +90,150 @@
                     <input
                         type="email"
                         id="registerEmail"
-                        placeholder="Enter your email"
+                        placeholder="you@example.com"
                         required
                     >
 
                 </div>
 
-                <div class="form-group">
 
-                    <label for="registerPassword">
-                        Password
-                    </label>
+                <div class="form-row">
 
-                    <input
-                        type="password"
-                        id="registerPassword"
-                        placeholder="Enter your password"
-                        required
-                    >
+                    <div class="form-group">
+
+                        <label for="registerPassword">
+                            Password
+                        </label>
+
+                        <div class="password-box">
+
+                            <input
+                                type="password"
+                                id="registerPassword"
+                                placeholder="Create password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                onclick="togglePassword('registerPassword', this)"
+                            >
+                                Show
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="confirmPassword">
+                            Confirm Password
+                        </label>
+
+                        <div class="password-box">
+
+                            <input
+                                type="password"
+                                id="confirmPassword"
+                                placeholder="Confirm password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                onclick="togglePassword('confirmPassword', this)"
+                            >
+                                Show
+                            </button>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
-                <div class="form-group">
 
-                    <label for="confirmPassword">
-                        Confirm Password
-                    </label>
+                <!-- Password hint -->
+                <div class="password-hint">
 
-                    <input
-                        type="password"
-                        id="confirmPassword"
-                        placeholder="Confirm your password"
-                        required
-                    >
+                    <span></span>
+
+                    Password should contain at least 8 characters.
 
                 </div>
 
-                <button type="submit" class="btn">
-                    Create Account
+
+                <!-- Btn-->
+                <button
+                    type="submit"
+                    class="create-btn"
+                >
+
+                    <span>Create Account</span>
+
                 </button>
 
             </form>
 
+
+            <!-- Message -->
             <p id="registerMessage"></p>
 
-            <p class="register-link">
-                Already have an account?
-                <a href="index.html">Login here</a>
-            </p>
+
+            <!-- Bottom -->
+            <div class="bottom">
+
+                <span>Already have an account?</span>
+
+                <a href="index.html">
+                    Login
+                </a>
+
+            </div>
+
+
+            <!-- Footer -->
+            <div class="card-footer">
+
+                <span>HustleHub+</span>
+
+                <span>Build. Connect. Grow.</span>
+
+            </div>
 
         </div>
 
     </div>
 
+
     <script src="script.js"></script>
+
+
+    <script>
+
+        function togglePassword(inputId, button) {
+
+            const input =
+                document.getElementById(inputId);
+
+            if (input.type === "password") {
+
+                input.type = "text";
+
+                button.textContent = "Hide";
+
+            } else {
+
+                input.type = "password";
+
+                button.textContent = "Show";
+
+            }
+
+        }
+
+    </script>
 
 </body>
 

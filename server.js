@@ -1,16 +1,19 @@
+require("dotenv").config();
+
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const validator = require("validator");
-
+const https = require("https");
+const fs = require("fs");
 
 const app = express();
 
 app.use(express.json());
 app.use(express.static("public"));
 
-const PORT = 4000;
-const JWT_SECRET = "hustlehubplus-development-secret";
+const PORT = process.env.PORT || 4000;
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // Temporary user storage
 const users = [];
@@ -143,7 +146,9 @@ app.post("/api/auth/login", async (req, res) => {
     }
 
     // Find the user by email
-    const user = users.find(user => user.email === email);
+    const user = users.find(
+    user => user.email === email.toLowerCase()
+);
 
     // If user does not exist
     if (!user) {
@@ -211,6 +216,11 @@ app.get("/api/profile", authenticateToken, (req, res) => {
 // START SERVER
 
 
-app.listen(PORT, () => {
-    console.log(`HustleHub+ API is running on port ${PORT}`);
+const sslOptions = {
+    key: fs.readFileSync("./cert/key.pem"),
+    cert: fs.readFileSync("./cert/cert.pem")
+};
+
+https.createServer(sslOptions, app).listen(PORT, () => {
+    console.log(`HustleHub+ API is running securely on https://localhost:${PORT}`);
 });

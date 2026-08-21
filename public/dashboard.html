@@ -13,33 +13,121 @@
 
 </head>
 
-<body>
+<body class="dashboard-page">
 
-    <div class="container">
+    <aside class="sidebar">
 
-        <div class="login-box">
+        <div class="sidebar-logo">
+            HustleHub<span>+</span>
+        </div>
 
-            <h1>HustleHub+</h1>
+        <nav>
 
-            <h2>Dashboard</h2>
+            <a href="#" class="nav-link active">
+                Dashboard
+            </a>
 
-            <p class="subtitle">
-                You are logged in successfully.
-            </p>
+            <a href="#" class="nav-link">
+                My Hustles
+            </a>
 
-            <div id="profile">
+            <a href="#" class="nav-link">
+                Opportunities
+            </a>
+
+            <a href="#" class="nav-link">
+                Settings
+            </a>
+
+        </nav>
+
+        <button id="logoutButton" class="sidebar-logout">
+            Logout
+        </button>
+
+    </aside>
+
+
+    <main class="dashboard-main">
+
+        <header class="dashboard-header">
+
+            <div>
+
+                <p class="dashboard-label">
+                    DASHBOARD
+                </p>
+
+                <h1>
+                    Welcome back.
+                </h1>
+
+                <p class="dashboard-subtitle">
+                    Manage your HustleHub+ account from here.
+                </p>
+
+            </div>
+
+        </header>
+
+
+        <section class="profile-section">
+
+            <div class="section-header">
+
+                <div>
+                    <p class="section-label">
+                        ACCOUNT
+                    </p>
+
+                    <h2>
+                        Your Profile
+                    </h2>
+                </div>
+
+            </div>
+
+
+            <div id="profile" class="profile">
 
                 <p>Loading your profile...</p>
 
             </div>
 
-            <button id="logoutButton" class="btn">
-                Logout
-            </button>
+        </section>
 
-        </div>
 
-    </div>
+        <section class="activity-section">
+
+            <div class="section-header">
+
+                <div>
+
+                    <p class="section-label">
+                        ACTIVITY
+                    </p>
+
+                    <h2>
+                        Recent Activity
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="empty-state">
+
+                <p>
+                    You don't have any activity yet.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
 
     <script src="script.js"></script>
 

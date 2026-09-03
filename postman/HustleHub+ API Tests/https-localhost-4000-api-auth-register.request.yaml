@@ -1,0 +1,35 @@
+$kind: http-request
+name: https://localhost:4000/api/auth/register
+description: ""
+url: https://localhost:4000/api/auth/register
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"name\": \"KaraboM\",\r
+
+    \  \"email\": \"KaraboM@gmail.com\",\r
+
+    \  \"password\": \"KaraboM@1234\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status code is 201\", function () {\r
+
+      pm.response.to.have.status(201);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Registration successful\", function () {\r
+
+      const jsonData = pm.response.json();\r
+
+      pm.expect(jsonData.message).to.eql(\"User registered successfully.\");\r
+
+      });"
+    language: text/javascript
+order: 4379007113982957

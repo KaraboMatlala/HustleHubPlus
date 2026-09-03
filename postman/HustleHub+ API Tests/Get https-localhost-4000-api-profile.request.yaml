@@ -1,0 +1,21 @@
+$kind: http-request
+name: Get https://localhost:4000/api/profile
+description: ""
+url: https://localhost:4000/api/profile
+method: GET
+body:
+  type: json
+  content: "{\r
+
+    \  \"name\": \"Another User\",\r
+
+    \  \"email\": \"karabo@example.com\",\r
+
+    \  \"password\": \"Password123\"\r
+
+    }"
+auth:
+  type: bearer
+  credentials:
+    token: this-is-not-a-valid-jwt-token
+order: 1788413112331

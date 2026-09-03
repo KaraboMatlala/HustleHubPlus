@@ -1,0 +1,43 @@
+$kind: http-request
+name: https://localhost:4000/api/auth/login
+description: ""
+url: https://localhost:4000/api/auth/login
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"email\": \"Karabo@gmail.com\",\r
+
+    \  \"password\": \"Karabo@1234\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status code is 200\", function () {\r
+
+      pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Login successful\", function () {\r
+
+      const jsonData = pm.response.json();\r
+
+      pm.expect(jsonData.message).to.eql(\"Login successful.\");\r
+
+      });\r
+
+      \r
+
+      pm.test(\"JWT token is returned\", function () {\r
+
+      const jsonData = pm.response.json();\r
+
+      pm.expect(jsonData.token).to.exist;\r
+
+      });"
+    language: text/javascript
+order: 2986337444848354

@@ -1,0 +1,19 @@
+$kind: http-request
+name: Post https://localhost:4000/api/auth/register
+description: ""
+url: https://localhost:4000/api/auth/register
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"name\": \"Test User\",\r
+
+    \  \"email\": \"karabo@gmail.com\",\r
+
+    \  \"password\": \"Pass1\"\r
+
+    }"
+auth:
+  type: noauth
+order: 2366240678321843

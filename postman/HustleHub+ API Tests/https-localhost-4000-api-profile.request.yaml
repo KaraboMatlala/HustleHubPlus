@@ -1,0 +1,57 @@
+$kind: http-request
+name: https://localhost:4000/api/profile
+description: ""
+url: https://localhost:4000/api/profile
+method: GET
+body:
+  type: json
+  content: "{\r
+
+    \  \"email\": \"Karabo@gmail.com\",\r
+
+    \  \"password\": \"Karabo@1234\"\r
+
+    }"
+auth:
+  type: bearer
+  credentials:
+    token: "{{json_web_token_0upz}}"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status code is 200\", function () {\r
+
+      pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Protected route accessed successfully\", function () {\r
+
+      const jsonData = pm.response.json();\r
+
+      pm.expect(jsonData.message).to.eql(\r
+
+      \"You have accessed a protected route.\"\r
+
+      );\r
+
+      });\r
+
+      \r
+
+      pm.test(\"User information is returned\", function () {\r
+
+      const jsonData = pm.response.json();\r
+
+      \r
+
+      pm.expect(jsonData.user).to.exist;\r
+
+      pm.expect(jsonData.user.name).to.exist;\r
+
+      pm.expect(jsonData.user.email).to.exist;\r
+
+      });"
+    language: text/javascript
+order: 4060696579385236

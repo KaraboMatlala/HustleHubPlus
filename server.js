@@ -3,6 +3,9 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const connectDB = require("./config/db");
+const User = require("./models/User");
+const authenticateToken = require("./middleware/authenticateToken");
+const gigRoutes = require("./routes/gigRoutes");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const validator = require("validator");
@@ -13,6 +16,8 @@ const app = express();
 
 app.use(express.json());
 app.use(express.static("public"));
+app.use("/api/gigs", gigRoutes);
+
 
 const PORT = process.env.PORT || 4000;
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -20,7 +25,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 // Temporary user storage
 //const users = [];
 
-
+/*
 // JWT AUTHENTICATION 
 
 function authenticateToken(req, res, next) {
@@ -45,6 +50,8 @@ function authenticateToken(req, res, next) {
         next();
     });
 }
+
+*/
 
 
 // HOME ROUTE

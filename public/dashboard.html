@@ -1,135 +1,276 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
 
-    <meta charset="UTF-8">
+```
+<meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>HustleHub+ | Dashboard</title>
+<title>HustleHub+ | Dashboard</title>
 
-    <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css">
+```
 
 </head>
 
 <body class="dashboard-page">
 
-    <aside class="sidebar">
+```
+<aside class="sidebar">
 
-        <div class="sidebar-logo">
-            HustleHub<span>+</span>
+    <div class="sidebar-logo">
+        HustleHub<span>+</span>
+    </div>
+
+    <nav>
+
+        <a href="#" class="nav-link active">
+            Dashboard
+        </a>
+
+        <a href="#" class="nav-link">
+            My Hustles
+        </a>
+
+        <a href="#" class="nav-link">
+            Opportunities
+        </a>
+
+        <a href="#" class="nav-link">
+            Settings
+        </a>
+
+    </nav>
+
+    <button id="logoutButton" class="sidebar-logout">
+        Logout
+    </button>
+
+</aside>
+
+
+<main class="dashboard-main">
+
+    <header class="dashboard-header">
+
+        <div>
+
+            <p class="dashboard-label">
+                DASHBOARD
+            </p>
+
+            <h1 id="welcomeMessage">
+                Welcome back.
+            </h1>
+
+            <p class="dashboard-subtitle">
+                Manage your HustleHub+ account from here.
+            </p>
+
         </div>
 
-        <nav>
-
-            <a href="#" class="nav-link active">
-                Dashboard
-            </a>
-
-            <a href="#" class="nav-link">
-                My Hustles
-            </a>
-
-            <a href="#" class="nav-link">
-                Opportunities
-            </a>
-
-            <a href="#" class="nav-link">
-                Settings
-            </a>
-
-        </nav>
-
-        <button id="logoutButton" class="sidebar-logout">
-            Logout
-        </button>
-
-    </aside>
+    </header>
 
 
-    <main class="dashboard-main">
+    <section class="profile-section">
 
-        <header class="dashboard-header">
+        <div class="section-header">
 
             <div>
 
-                <p class="dashboard-label">
-                    DASHBOARD
+                <p class="section-label">
+                    ACCOUNT
                 </p>
 
-                <h1>
-                    Welcome back.
-                </h1>
+                <h2>
+                    Your Profile
+                </h2>
 
-                <p class="dashboard-subtitle">
-                    Manage your HustleHub+ account from here.
+            </div>
+
+        </div>
+
+        <div id="profile" class="profile">
+
+            <p>Loading your profile...</p>
+
+        </div>
+
+    </section>
+
+
+    <section id="clientSection" class="activity-section role-section">
+
+        <div class="section-header">
+
+            <div>
+
+                <p class="section-label">
+                    CLIENT
                 </p>
 
-            </div>
-
-        </header>
-
-
-        <section class="profile-section">
-
-            <div class="section-header">
-
-                <div>
-                    <p class="section-label">
-                        ACCOUNT
-                    </p>
-
-                    <h2>
-                        Your Profile
-                    </h2>
-                </div>
+                <h2>
+                    Client Dashboard
+                </h2>
 
             </div>
 
+        </div>
 
-            <div id="profile" class="profile">
+        <div class="dashboard-card">
 
-                <p>Loading your profile...</p>
+            <h3>My Bookings</h3>
 
-            </div>
+            <p>
+                View and manage the services you have booked.
+            </p>
 
-        </section>
+            <div id="clientBookings">
 
-
-        <section class="activity-section">
-
-            <div class="section-header">
-
-                <div>
-
-                    <p class="section-label">
-                        ACTIVITY
-                    </p>
-
-                    <h2>
-                        Recent Activity
-                    </h2>
-
-                </div>
+                <p>Loading bookings...</p>
 
             </div>
 
+        </div>
 
-            <div class="empty-state">
+    </section>
 
-                <p>
-                    You don't have any activity yet.
+
+    <section id="freelancerSection" class="activity-section role-section">
+
+        <div class="section-header">
+
+            <div>
+
+                <p class="section-label">
+                    FREELANCER
                 </p>
 
+                <h2>
+                    Freelancer Dashboard
+                </h2>
+
             </div>
 
-        </section>
-
-    </main>
+        </div>
 
 
-    <script src="script.js"></script>
+        <div class="dashboard-card">
+
+            <h3>My Income</h3>
+
+            <p id="incomeAmount">
+                Loading income...
+            </p>
+
+            <p id="transactionCount">
+                Loading transactions...
+            </p>
+
+        </div>
+
+
+        <div class="dashboard-card">
+
+            <h3>My Bookings</h3>
+
+            <div id="freelancerBookings">
+
+                <p>Loading bookings...</p>
+
+            </div>
+
+        </div>
+
+
+        <div class="dashboard-card">
+
+            <h3>My Gigs</h3>
+
+            <p>
+                Create and manage the services you offer.
+            </p>
+
+            <div id="freelancerGigs">
+
+                <p>Loading gigs...</p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section id="adminSection" class="activity-section role-section">
+
+        <div class="section-header">
+
+            <div>
+
+                <p class="section-label">
+                    ADMIN
+                </p>
+
+                <h2>
+                    Administration
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="dashboard-card">
+
+            <h3>Administration</h3>
+
+            <p>
+                Manage and monitor the HustleHub+ platform.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <section class="activity-section">
+
+        <div class="section-header">
+
+            <div>
+
+                <p class="section-label">
+                    ACTIVITY
+                </p>
+
+                <h2>
+                    Recent Activity
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="empty-state">
+
+            <p>
+                Your recent HustleHub+ activity will appear here.
+            </p>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script src="script.js"></script>
+```
 
 </body>
 

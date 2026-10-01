@@ -1,7 +1,14 @@
 import { useState } from "react";
+import { Link, Navigate } from "react-router-dom";
+
+import { useAuth } from "../context/useAuth";
+import { passwordProblem } from "../utils/validation";
+
 import "../styles/Auth.css";
 
 function Register() {
+  const { user, register } = useAuth();
+
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -12,6 +19,13 @@ function Register() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+
+  // Signed in already, or just created the account (register logs you in).
+  if (user) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   function handleChange(e) {
     setFormData({
@@ -20,30 +34,35 @@ function Register() {
     });
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
+    setError("");
+
+    const problem = passwordProblem(formData.password);
+
+    if (problem) {
+      setError(problem);
+      return;
+    }
 
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match.");
+      setError("Passwords do not match.");
       return;
     }
 
-    if (formData.password.length < 8) {
-      alert("Password should contain at least 8 characters.");
-      return;
+    setSubmitting(true);
+
+    try {
+      await register({
+        name: formData.fullName.trim(),
+        email: formData.email.trim(),
+        password: formData.password,
+        role: formData.role,
+      });
+    } catch (err) {
+      setError(err.message);
+      setSubmitting(false);
     }
-
-    console.log("New User:", formData);
-
-    alert("Registration successful!");
-
-    setFormData({
-      fullName: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-      role: "freelancer",
-    });
   }
 
   return (
@@ -57,7 +76,6 @@ function Register() {
       <div className="plus-pattern plus-three">+</div>
 
       <main className="auth-card register-card">
-
         {/* Top section */}
         <div className="auth-top">
           <div className="auth-logo">
@@ -85,7 +103,6 @@ function Register() {
 
         {/* Registration form */}
         <form onSubmit={handleSubmit} className="auth-form">
-
           {/* Full Name */}
           <div className="form-group">
             <label htmlFor="fullName">Full Name</label>
@@ -95,6 +112,8 @@ function Register() {
               type="text"
               name="fullName"
               placeholder="Enter your full name"
+              autoComplete="name"
+              maxLength={80}
               value={formData.fullName}
               onChange={handleChange}
               required
@@ -110,6 +129,7 @@ function Register() {
               type="email"
               name="email"
               placeholder="you@example.com"
+              autoComplete="email"
               value={formData.email}
               onChange={handleChange}
               required
@@ -126,9 +146,11 @@ function Register() {
                 type={showPassword ? "text" : "password"}
                 name="password"
                 placeholder="Create a password"
+                autoComplete="new-password"
                 value={formData.password}
                 onChange={handleChange}
-                minLength="8"
+                minLength={8}
+                maxLength={72}
                 required
               />
 
@@ -152,25 +174,25 @@ function Register() {
                 type={showConfirmPassword ? "text" : "password"}
                 name="confirmPassword"
                 placeholder="Confirm your password"
+                autoComplete="new-password"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                minLength="8"
+                minLength={8}
+                maxLength={72}
                 required
               />
 
               <button
                 type="button"
                 className="password-toggle"
-                onClick={() =>
-                  setShowConfirmPassword(!showConfirmPassword)
-                }
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               >
                 {showConfirmPassword ? "Hide" : "Show"}
               </button>
             </div>
           </div>
 
-          {/* Password hint */}
+          {/* Password hint (matches the server's rules) */}
           <p
             style={{
               fontSize: "11px",
@@ -179,7 +201,7 @@ function Register() {
               marginBottom: "20px",
             }}
           >
-            Password should contain at least 8 characters.
+            At least 8 characters, with an uppercase letter and a number.
           </p>
 
           {/* Role */}
@@ -192,22 +214,27 @@ function Register() {
               value={formData.role}
               onChange={handleChange}
             >
-              <option value="freelancer">Freelancer</option>
-              <option value="client">Client</option>
+              <option value="freelancer">Freelancer - I offer services</option>
+              <option value="client">Client - I want to hire</option>
             </select>
           </div>
 
+          {error && (
+            <p className="form-error" role="alert">
+              {error}
+            </p>
+          )}
+
           {/* Submit */}
-          <button type="submit" className="auth-button">
-            Create Account
+          <button type="submit" className="auth-button" disabled={submitting}>
+            {submitting ? "Creating account…" : "Create Account"}
           </button>
         </form>
 
         {/* Login link */}
         <div className="auth-bottom">
           <p>
-            Already have an account?{" "}
-            <a href="/login">Log in</a>
+            Already have an account? <Link to="/login">Log in</Link>
           </p>
         </div>
 

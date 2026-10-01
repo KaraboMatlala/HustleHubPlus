@@ -6,7 +6,6 @@ const registerForm = document.getElementById("registerForm");
 
 if (registerForm) {
 
-```
 registerForm.addEventListener("submit", async function (event) {
 
     event.preventDefault();
@@ -74,8 +73,6 @@ registerForm.addEventListener("submit", async function (event) {
     }
 
 });
-```
-
 }
 
 // ===============================
@@ -86,7 +83,6 @@ const loginForm = document.getElementById("loginForm");
 
 if (loginForm) {
 
-```
 loginForm.addEventListener("submit", async function (event) {
 
     event.preventDefault();
@@ -148,8 +144,6 @@ loginForm.addEventListener("submit", async function (event) {
     }
 
 });
-```
-
 }
 
 // ===============================
@@ -161,7 +155,6 @@ const logoutButton = document.getElementById("logoutButton");
 
 if (profile) {
 
-```
 const token = localStorage.getItem("token");
 
 if (!token) {
@@ -195,12 +188,28 @@ if (!token) {
 
     .then(data => {
 
-profile.innerHTML =
-    "<p><strong>Access Granted</strong></p>" +
-    "<p>Welcome, " + data.user.name + "!</p>" +
-    "<p>Email: " + data.user.email + "</p>" +
-    "<p>Role: " + data.user.role + "</p>" +
-    "<p>User ID: " + data.user.id + "</p>";
+// textContent (not innerHTML) so a name like <img onerror=...> is shown, not run.
+profile.replaceChildren();
+
+const profileLines = [
+    ["Access Granted", true],
+    ["Welcome, " + data.user.name + "!"],
+    ["Email: " + data.user.email],
+    ["Role: " + data.user.role],
+    ["User ID: " + data.user.id]
+];
+
+for (const [text, bold] of profileLines) {
+    const p = document.createElement("p");
+    if (bold) {
+        const strong = document.createElement("strong");
+        strong.textContent = text;
+        p.appendChild(strong);
+    } else {
+        p.textContent = text;
+    }
+    profile.appendChild(p);
+}
 
         const welcomeMessage =
             document.getElementById("welcomeMessage");
@@ -258,8 +267,6 @@ profile.innerHTML =
     });
 
 }
-```
-
 }
 
 // ===============================
@@ -268,7 +275,6 @@ profile.innerHTML =
 
 if (logoutButton) {
 
-```
 logoutButton.addEventListener("click", function () {
 
     localStorage.removeItem("token");
@@ -276,6 +282,28 @@ logoutButton.addEventListener("click", function () {
     window.location.href = "index.html";
 
 });
-```
-
 }
+
+// ===============================
+// SHOW / HIDE PASSWORD
+// (inline onclick handlers are blocked by the Content-Security-Policy)
+// ===============================
+
+document.querySelectorAll("[data-toggle-password]").forEach(function (button) {
+
+    button.addEventListener("click", function () {
+
+        const input = document.getElementById(button.dataset.togglePassword);
+
+        if (!input) {
+            return;
+        }
+
+        const hidden = input.type === "password";
+
+        input.type = hidden ? "text" : "password";
+        button.textContent = hidden ? "Hide" : "Show";
+
+    });
+
+});

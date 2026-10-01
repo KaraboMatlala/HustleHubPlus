@@ -5,19 +5,22 @@ const gigSchema = new mongoose.Schema(
         title: {
             type: String,
             required: true,
-            trim: true
+            trim: true,
+            maxlength: 100
         },
 
         description: {
             type: String,
             required: true,
-            trim: true
+            trim: true,
+            maxlength: 1000
         },
 
         category: {
             type: String,
             required: true,
-            trim: true
+            trim: true,
+            maxlength: 50
         },
 
         price: {
@@ -29,7 +32,8 @@ const gigSchema = new mongoose.Schema(
         freelancer: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
-            required: true
+            required: true,
+            index: true
         },
 
         status: {
@@ -42,5 +46,8 @@ const gigSchema = new mongoose.Schema(
         timestamps: true
     }
 );
+
+// Marketplace listing: active gigs, newest first.
+gigSchema.index({ status: 1, createdAt: -1 });
 
 module.exports = mongoose.model("Gig", gigSchema);

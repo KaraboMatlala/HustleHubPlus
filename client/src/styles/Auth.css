@@ -24,7 +24,7 @@
 ========================================== */
 
 .auth-page {
-  min-height: 100vh;
+  min-height: calc(100vh - var(--nav-height, 0px));
   background: var(--background);
   color: var(--text);
 
@@ -509,4 +509,14 @@
   .auth-footer {
     font-size: 8px;
   }
+}
+
+/* Submit button while a request is in flight */
+.auth-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.auth-form .form-error {
+  margin: 0 0 16px;
 }

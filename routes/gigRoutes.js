@@ -5,6 +5,7 @@ const router = express.Router();
 const {
     createGig,
     getAllGigs,
+    getMyGigs,
     updateGig,
     deleteGig
 } = require("../controllers/gigController");
@@ -15,6 +16,16 @@ const authorizeRole = require("../middleware/authorizeRole");
 
 // Anyone can browse gigs
 router.get("/", getAllGigs);
+
+
+// A freelancer's own gigs (including hidden ones).
+// Must be declared before "/:id" routes so "mine" isn't read as an id.
+router.get(
+    "/mine",
+    authenticateToken,
+    authorizeRole("freelancer"),
+    getMyGigs
+);
 
 
 // Only freelancers can create gigs

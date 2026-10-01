@@ -1,12 +1,14 @@
 const mongoose = require("mongoose");
 
+// Throws if the connection fails - server.js decides what to do about it.
+// (It used to swallow the error, so the server kept running with no database
+// and every request just hung until it timed out.)
 const connectDB = async () => {
-    try {
-        await mongoose.connect(process.env.MONGODB_URI);
-        console.log("MongoDB connected successfully");
-    } catch (error) {
-        console.error("MongoDB connection failed:", error.message);
-    }
+    await mongoose.connect(process.env.MONGODB_URI, {
+        serverSelectionTimeoutMS: 10000
+    });
+
+    console.log(`MongoDB connected (database: ${mongoose.connection.name})`);
 };
 
 module.exports = connectDB;

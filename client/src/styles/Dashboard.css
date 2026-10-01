@@ -14,7 +14,7 @@
 /* ===== PAGE ===== */
 
 .dashboard {
-  min-height: 100vh;
+  min-height: calc(100vh - var(--nav-height, 0px));
   background: var(--background);
   padding: 45px 60px;
   font-family: Arial, Helvetica, sans-serif;

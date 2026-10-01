@@ -2,15 +2,25 @@ const Booking = require("../models/Booking");
 const Gig = require("../models/Gig");
 const Transaction = require("../models/Transaction");
 
+const isValidId = (value) =>
+    typeof value === "string" && /^[a-f\d]{24}$/i.test(value);
+
 
 // CREATE BOOKING
 const createBooking = async (req, res) => {
     try {
-        const { gigId } = req.body;
+        const { gigId } = req.body || {};
 
         if (!gigId) {
             return res.status(400).json({
                 message: "Gig ID is required."
+            });
+        }
+
+        // A malformed id used to throw a CastError and come back as a 500.
+        if (!isValidId(gigId)) {
+            return res.status(400).json({
+                message: "Invalid gig ID."
             });
         }
 
@@ -43,13 +53,21 @@ const createBooking = async (req, res) => {
             status: "confirmed"
         });
 
-        const transaction = await Transaction.create({
-            booking: booking._id,
-            client: req.user.id,
-            freelancer: gig.freelancer,
-            amount: gig.price,
-            status: "successful"
-        });
+        let transaction;
+
+        try {
+            transaction = await Transaction.create({
+                booking: booking._id,
+                client: req.user.id,
+                freelancer: gig.freelancer,
+                amount: gig.price,
+                status: "successful"
+            });
+        } catch (transactionError) {
+            // Don't leave a confirmed booking behind with no payment record.
+            await Booking.findByIdAndDelete(booking._id);
+            throw transactionError;
+        }
 
         return res.status(201).json({
             message: "Booking created successfully.",
@@ -73,6 +91,7 @@ const getClientBookings = async (req, res) => {
         const bookings = await Booking.find({
             client: req.user.id
         })
+            .sort({ createdAt: -1 })
             .populate("gig")
             .populate("freelancer", "name email");
 
@@ -97,6 +116,7 @@ const getFreelancerBookings = async (req, res) => {
         const bookings = await Booking.find({
             freelancer: req.user.id
         })
+            .sort({ createdAt: -1 })
             .populate("gig")
             .populate("client", "name email");
 

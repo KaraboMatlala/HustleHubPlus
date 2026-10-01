@@ -1,13 +1,34 @@
 import { useState } from "react";
+import { Link, Navigate, useLocation } from "react-router-dom";
+
+import { useAuth } from "../context/useAuth";
+
 import "../styles/Auth.css";
 
 function Login() {
+  const { user, login } = useAuth();
+  const location = useLocation();
+
+  // ProtectedRoute and the "Log in to book" button pass where the person was
+  // headed, so we can send them back there afterwards.
+  const destination =
+    typeof location.state?.from === "string" && location.state.from.startsWith("/")
+      ? location.state.from
+      : "/dashboard";
+
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
   });
 
   const [showPassword, setShowPassword] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+
+  // Already signed in (or just finished signing in): leave this page.
+  if (user) {
+    return <Navigate to={destination} replace />;
+  }
 
   function handleChange(e) {
     setLoginData({
@@ -16,12 +37,19 @@ function Login() {
     });
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
 
-    console.log("Login:", loginData);
+    setError("");
+    setSubmitting(true);
 
-    alert("Login successful!");
+    try {
+      // On success the context updates and the <Navigate> above takes over.
+      await login(loginData.email.trim(), loginData.password);
+    } catch (err) {
+      setError(err.message);
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -70,6 +98,7 @@ function Login() {
               type="email"
               name="email"
               placeholder="you@example.com"
+              autoComplete="email"
               value={loginData.email}
               onChange={handleChange}
               required
@@ -85,6 +114,7 @@ function Login() {
                 type={showPassword ? "text" : "password"}
                 name="password"
                 placeholder="Enter your password"
+                autoComplete="current-password"
                 value={loginData.password}
                 onChange={handleChange}
                 required
@@ -100,16 +130,21 @@ function Login() {
             </div>
           </div>
 
-          <button type="submit" className="auth-button">
-            Log In
+          {error && (
+            <p className="form-error" role="alert">
+              {error}
+            </p>
+          )}
+
+          <button type="submit" className="auth-button" disabled={submitting}>
+            {submitting ? "Logging in…" : "Log In"}
           </button>
         </form>
 
         {/* Bottom link */}
         <div className="auth-bottom">
           <p>
-            Don't have an account?{" "}
-            <a href="/register">Create one</a>
+            Don't have an account? <Link to="/register">Create one</Link>
           </p>
         </div>
 

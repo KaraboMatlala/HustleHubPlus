@@ -1,420 +1,171 @@
-My Updated readme
- ffcd59e (MONGODB database done)
 # HustleHub+
 
-HustleHub+ is a web-based platform designed to connect people who offer
-skills and services with people looking for those services. The project
-includes a Node.js and Express backend, a browser-based frontend, secure
-user authentication, JWT-based authorization, password hashing, input
-validation, and HTTPS support for local development.
+HustleHub+ connects people who offer skills and services (**freelancers**) with
+people who need them (**clients**). Freelancers post **gigs**, clients browse the
+marketplace and **book** them, and freelancers see their bookings and income.
 
-## Features
+- **Back end:** Node.js, Express 5, MongoDB (Mongoose), JWT auth, bcrypt, helmet,
+  rate limiting, input validation / NoSQL-injection sanitising
+- **Front end:** React 19 + React Router, built with Vite (`client/`)
+- **Local HTTPS** with a self-signed certificate (optional)
 
--   User registration
--   User login
--   Password hashing using bcrypt
--   Email and password validation
--   Duplicate email checking
--   JWT authentication
--   Protected user profile/dashboard
--   Logout functionality
--   HTTPS using a self-signed SSL certificate for local development
--   Frontend served directly by the Express server
--   API testing with Postman
+## What you can do
 
-## Technologies Used
+| Role | Can do |
+| --- | --- |
+| Anyone | Browse and search the gig marketplace |
+| Client | Book a gig, see their bookings and total spent |
+| Freelancer | Post / edit / hide / delete their own gigs, see who booked them, see income |
 
--   Node.js
--   Express.js
--   JavaScript
--   HTML5
--   CSS3
--   bcryptjs
--   JSON Web Token (JWT)
--   validator
--   OpenSSL
--   Postman
+Payments are **simulated**: booking a gig records a booking and a successful
+transaction, but no money moves.
 
-## Project Structure
+## Project structure
 
-``` text
+```text
 HustleHubPlus/
-│
-├── cert/
-│   ├── cert.pem
-│   └── key.pem
-│
-├── public/
-│   ├── dashboard.html
-│   ├── index.html
-│   ├── register.html
-│   ├── script.js
-│   └── style.css
-│
-├── node_modules/
-├── .gitignore
-├── package.json
-├── package-lock.json
-└── server.js
+├── app.js                 Express app: security middleware, routes, static files
+├── server.js              Checks config, connects to MongoDB, starts HTTP(S)
+├── config/db.js           MongoDB connection
+├── controllers/           auth, gig and booking logic
+├── routes/                auth, gig and booking routes
+├── middleware/            authenticateToken (JWT), authorizeRole
+├── models/                User, Gig, Booking, Transaction
+├── test/                  API tests (no database needed)
+├── client/                React front end (Vite)
+│   └── src/
+│       ├── pages/         Home, Login, Register, Dashboard, Gigs, MyGigs, Bookings
+│       ├── components/    Navbar, ProtectedRoute, GigCard, GigFormModal, Modal
+│       ├── context/       AuthProvider / useAuth
+│       └── api.js         fetch wrapper (adds the JWT, handles errors)
+└── public/                Old static pages - only served if client/dist doesn't exist
 ```
 
-## Requirements
+## Setup
 
-Before running the project, make sure the following are installed:
+You need Node.js 20+, npm, and a MongoDB database (e.g. a free MongoDB Atlas cluster).
 
--   Node.js
--   npm
--   OpenSSL
-
-Check the installations with:
-
-``` bash
-node --version
-npm --version
-openssl version
-```
-
-## Installation
-
-### 1. Clone the repository
-
-``` bash
+```bash
 git clone https://github.com/KaraboMatlala/HustleHubPlus.git
-```
-
-### 2. Open the project directory
-
-``` bash
 cd HustleHubPlus
-```
-
-### 3. Install dependencies
-
-``` bash
 npm install
+npm run client:install
 ```
 
-## HTTPS Certificate Setup
+### Configure `.env`
 
-HustleHub+ uses a self-signed certificate for local HTTPS development.
+Copy `.env.example` to `.env` and fill it in:
 
-The certificate files are stored in:
-
-``` text
-cert/
-├── cert.pem
-└── key.pem
+```text
+MONGODB_URI=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/hustlehubplus
+JWT_SECRET=<a long random string>
+PORT=4000
 ```
 
-To generate a new certificate using OpenSSL:
+Generate a secret with:
 
-``` bash
+```bash
+node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
+```
+
+> Put a database name (`/hustlehubplus` above) at the end of the URI. Without
+> one, MongoDB uses its default database called `test`.
+>
+> `.env` is git-ignored. Never commit it or share it.
+
+### Optional: local HTTPS certificate
+
+If `cert/key.pem` and `cert/cert.pem` exist the server uses HTTPS, otherwise it
+falls back to plain HTTP. To create a certificate:
+
+```bash
+mkdir cert
 openssl req -x509 -newkey rsa:2048 -keyout cert/key.pem -out cert/cert.pem -days 365 -nodes
 ```
 
-When prompted for the Common Name, use:
+Use `localhost` as the Common Name. `cert/` is git-ignored.
 
-``` text
-localhost
+## Running
+
+### Development (hot reload)
+
+Two terminals:
+
+```bash
+npm run dev            # API on https://localhost:4000 (http:// if no cert)
+npm run client:dev     # React app on http://localhost:5173
 ```
 
-### Important
+Open **http://localhost:5173**. Vite proxies `/api` to the Express server, so
+there is nothing to configure. If your API is on plain HTTP or another port:
 
-The private key (`key.pem`) must not be uploaded to GitHub. The
-certificate directory should be excluded through `.gitignore` when the
-certificate is only being used for local development.
-
-## Running the Application
-
-Start the server from the project directory:
-
-``` bash
-node server.js
+```bash
+API_URL=http://localhost:4000 npm run client:dev
 ```
 
-The application runs on:
+### Production-style (one server)
 
-``` text
-https://localhost:4000
+```bash
+npm run client:build   # builds client/ into client/dist
+npm start              # Express serves the API and the built React app
 ```
 
-Open the frontend in a browser:
+Open **https://localhost:4000** (accept the browser warning for the self-signed
+certificate). Set `NODE_ENV=production` in real deployments to enable HSTS.
 
-``` text
-https://localhost:4000
+## API
+
+All bodies are JSON. Protected routes need `Authorization: Bearer <token>`.
+
+| Method | Route | Who | Notes |
+| --- | --- | --- | --- |
+| POST | `/api/auth/register` | anyone | `name`, `email`, `password` (8-72 chars, an uppercase letter and a number), optional `role`: `client` (default) or `freelancer` |
+| POST | `/api/auth/login` | anyone | returns `{ token, user }` (token lasts 1 hour) |
+| GET | `/api/profile` | logged in | the current user |
+| GET | `/api/gigs` | anyone | active gigs only. Optional `?search=` and `?category=`. Freelancer's name only, never email |
+| GET | `/api/gigs/mine` | freelancer | your gigs, including inactive ones |
+| POST | `/api/gigs` | freelancer | `title` (max 100), `description` (max 1000), `category`, `price` (0 - 1,000,000) |
+| PUT | `/api/gigs/:id` | owner | any of the fields above, plus `status`: `active` / `inactive` |
+| DELETE | `/api/gigs/:id` | owner | `409` if the gig already has bookings - hide it instead |
+| POST | `/api/bookings` | client | `{ "gigId": "..." }`, active gigs only; records a transaction |
+| GET | `/api/bookings/client` | client | your bookings |
+| GET | `/api/bookings/freelancer` | freelancer | bookings of your gigs |
+| GET | `/api/bookings/income` | freelancer | `totalIncome`, `transactionCount`, `transactions` |
+
+Errors look like `{ "message": "..." }`. An invalid or expired token returns `403`
+with `"code": "TOKEN_INVALID"`; the React app uses that to log the user out.
+
+## Tests
+
+```bash
+npm test
 ```
 
-Other available pages include:
-
-``` text
-https://localhost:4000/register.html
-https://localhost:4000/dashboard.html
-```
-
-Because the project uses a self-signed certificate, the browser may
-display a certificate warning when accessing the application locally.
-
-## API Endpoints
-
-### Register
-
-**POST**
-
-``` text
-https://localhost:4000/api/auth/register
-```
-
-Example request:
-
-``` json
-{
-  "name": "Mahlatsi",
-  "email": "mahlatsi@example.com",
-  "password": "Password123"
-}
-```
-
-Successful response:
-
-``` json
-{
-  "message": "User registered successfully.",
-  "user": {
-    "id": 1,
-    "name": "Mahlatsi",
-    "email": "mahlatsi@example.com"
-  }
-}
-```
-
-### Login
-
-**POST**
-
-``` text
-https://localhost:4000/api/auth/login
-```
-
-Example request:
-
-``` json
-{
-  "email": "mahlatsi@example.com",
-  "password": "Password123"
-}
-```
-
-Successful login returns a JWT:
-
-``` json
-{
-  "message": "Login successful.",
-  "token": "JWT_TOKEN"
-}
-```
-
-### Protected Profile
-
-**GET**
-
-``` text
-https://localhost:4000/api/profile
-```
-
-The endpoint requires a valid JWT.
-
-In Postman, select:
-
-``` text
-Authorization → Bearer Token
-```
-
-Then paste the JWT returned by the login endpoint into the Token field.
-
-Successful response:
-
-``` json
-{
-  "message": "You have accessed a protected route.",
-  "user": {
-    "id": 1,
-    "name": "Mahlatsi",
-    "email": "mahlatsi@example.com"
-  }
-}
-```
-
-If no token is supplied, the API returns:
-
-``` json
-{
-  "message": "Access denied. Authentication token is required."
-}
-```
-
-## Authentication Flow
-
-The authentication process works as follows:
-
-``` text
-User Registration
-       ↓
-Input Validation
-       ↓
-Password Hashed with bcrypt
-       ↓
-User Created
-       ↓
-User Login
-       ↓
-Password Verified
-       ↓
-JWT Token Generated
-       ↓
-Token Stored by Frontend
-       ↓
-Protected API Request
-       ↓
-JWT Verified
-       ↓
-User Profile Returned
-```
-
-## Frontend
-
-The frontend is located in the `public` directory.
-
-### `index.html`
-
-Provides the login interface.
-
-### `register.html`
-
-Provides the user registration interface.
-
-### `dashboard.html`
-
-Displays protected user information after successful authentication.
-
-### `script.js`
-
-Handles:
-
--   Registration requests
--   Login requests
--   JWT storage in `localStorage`
--   Protected profile requests
--   Logout
--   Redirecting unauthenticated users
-
-### `style.css`
-
-Contains the styling for the frontend interface.
-
-## Testing with Postman
-
-The API can be tested using Postman.
-
-Recommended testing sequence:
-
-1.  Register a new user.
-2.  Login using the registered email and password.
-3.  Copy the JWT returned by the login endpoint.
-4.  Send a GET request to `/api/profile`.
-5.  Select **Bearer Token** under Authorization.
-6.  Paste the JWT into the Token field.
-7.  Confirm that the protected profile is returned.
-8.  Remove the token and test again.
-9.  Confirm that the API returns `401 Unauthorized`.
-
-## Security Features
-
-HustleHub+ includes several security-related controls:
-
--   Passwords are hashed with bcrypt instead of being stored as plain
-    text.
--   Password requirements include a minimum length, an uppercase
-    character, and a number.
--   Email addresses are validated before registration.
--   Duplicate email addresses are rejected.
--   JWTs are used to authenticate protected requests.
--   Protected routes reject requests without a valid token.
--   HTTPS is configured for local development.
--   Input validation is performed on registration data.
-
-## Current Development Limitation
-
-The current version uses temporary in-memory user storage:
-
-``` javascript
-const users = [];
-```
-
-This means registered users are lost when the Node.js server is stopped
-or restarted.
-
-For a production-ready version, user data should be stored in a
-persistent database and sensitive configuration values such as the JWT
-secret should be stored in environment variables rather than being
-hard-coded in the source code.
+Runs the API tests against the real Mongoose models with an in-memory store, so
+no MongoDB server is needed.
 
 ## Troubleshooting
 
-### Port 4000 is already in use
+**`Cannot start HustleHub+: MONGODB_URI is not set`** - create `.env` (see above).
 
-If the server displays:
+**`could not connect to MongoDB`** - check the URI/password, and that your IP is
+allowed in Atlas under *Network Access*.
 
-``` text
-EADDRINUSE: address already in use :::4000
-```
+**`port 4000 is already in use`** - stop the other process, or change `PORT`.
+On Windows: `netstat -ano | findstr :4000`, then `taskkill /PID <PID> /F`.
 
-find the process using port 4000:
+**Browser certificate warning** - expected with a self-signed certificate in
+local development. Proceed past it.
 
-``` bash
-netstat -ano | grep :4000
-```
+**The React app shows "Can't reach the server"** - the API isn't running, or
+`API_URL` points at the wrong place.
 
-Then terminate the process using its PID:
+## Authors
 
-``` bash
-taskkill //PID <PID> //F
-```
+Mahlatsi Ramano, Karabo Matlala, Tyrich Reddy
 
-Start the server again:
-
-``` bash
-node server.js
-```
-
-### SSL certificate warning
-
-The project uses a self-signed certificate for local development. A
-browser or API client may therefore display an SSL certificate warning.
-
-For local testing only, configure the client to trust/allow the
-self-signed certificate.
-
-## Development Notes
-
-This project is intended for development and academic demonstration
-purposes. Production deployment should use:
-
--   A trusted TLS certificate
--   Persistent database storage
--   Environment variables for secrets
--   Additional security middleware and production security configuration
--   Appropriate production hosting and monitoring
-
-## Author
-
-**HustleHub+ Mahlatsi Ramano, Karabo Matlala, Tyrich Reddy**
-
-Repository:
-
-``` text
-https://github.com/KaraboMatlala/HustleHubPlus
-```
+Repository: https://github.com/KaraboMatlala/HustleHubPlus
 
 ## License
 
-This project is intended for educational and development purposes.
+Intended for educational and development purposes.

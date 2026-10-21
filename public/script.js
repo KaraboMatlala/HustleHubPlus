@@ -305,5 +305,80 @@ document.querySelectorAll("[data-toggle-password]").forEach(function (button) {
         button.textContent = hidden ? "Hide" : "Show";
 
     });
+    //------------------------------------------------------
+   //            Tax Calculation
+ //--------------------------------------------------------
+const taxBrackets = [
+    { limit: 245100, base: 0, rate: 0.18 },
+    { limit: 383100, base: 44118, rate: 0.26 },
+    { limit: 530200, base: 79998, rate: 0.31 },
+    { limit: 695800, base: 125599, rate: 0.36 },
+    { limit: 887000, base: 185215, rate: 0.39 },
+    { limit: 1878600, base: 259783, rate: 0.41 },
+    { limit: Infinity, base: 666339, rate: 0.45 }
+];
 
+const taxRebates = {
+    under65: 17820,
+    age65to74: 27585,
+    age75plus: 30834
+};
+
+function calculateGrossTax(annualIncome) {
+    if (annualIncome <= 0) return 0;
+
+    const index = taxBrackets.findIndex(
+        bracket => annualIncome <= bracket.limit
+    );
+
+    const bracket = taxBrackets[index];
+    const lowerLimit = index === 0
+        ? 0
+        : taxBrackets[index - 1].limit;
+
+    return bracket.base +
+        (annualIncome - lowerLimit) * bracket.rate;
+}
+
+function estimateTax(monthlyProfit, ageGroup = "under65") {
+    if (!Number.isFinite(monthlyProfit) || monthlyProfit < 0) {
+        throw new Error("Enter a valid, non-negative income.");
+    }
+
+    const annualIncome = monthlyProfit * 12;
+
+    if (!Number.isFinite(annualIncome)) {
+        throw new Error("Income value is too large.");
+    }
+
+    const grossTax = calculateGrossTax(annualIncome);
+    const rebate = taxRebates[ageGroup];
+
+    if (rebate === undefined) {
+        throw new Error("Invalid age group.");
+    }
+
+    const estimatedTax = Math.max(0, grossTax - rebate);
+    const netIncome = annualIncome - estimatedTax;
+
+    return {
+        annualIncome,
+        grossTax,
+        rebate,
+        estimatedTax,
+        netIncome,
+        effectiveRate: annualIncome > 0
+            ? (estimatedTax / annualIncome) * 100
+            : 0
+    };
+}
+
+
+
+console.log("Annual income:", result.annualIncome);
+console.log("Tax before rebate:", result.grossTax);
+console.log("Tax rebate:", result.rebate);
+console.log("Estimated tax:", result.estimatedTax);
+console.log("Income after tax:", result.netIncome);
+console.log("Effective tax rate:", result.effectiveRate.toFixed(2) + "%");
 });
